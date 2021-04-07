@@ -46,10 +46,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 })
 
-app.get('/movies', (req, res) => {
-    res.json(top10);
-});
-
 app.get('/', (req, res) => {
     res.send('Welcome to the Time Travel Films API');
 });
@@ -57,6 +53,42 @@ app.get('/', (req, res) => {
 app.get('/documentation.html', (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname })
 });
+
+app.get('/movies', (req, res) => {
+    res.json(top10);
+});
+
+app.get('/movies/:title', (req, res) => {
+    res.send('Successful get data title');
+});
+
+app.get('/movies/:genre', (req, res) => {
+    res.send('Successful get list films genre');
+});
+
+app.get('/movies/:director', (req, res) => {
+    res.send('Successful get data director');
+});
+
+app.post('/users', (req, res) => {
+    res.send('Successful create new user');
+}); 
+
+app.put('/users/:user', (req, res) => {
+    res.send('Successful update user');
+}); 
+
+app.post('/users/:user/favorites', (req, res) => {
+    res.send('Successful add new favorite film');
+}); 
+
+app.delete('/users/:user/favorites/:title', (req, res) => {
+    res.send('Successful delete favorite film');
+}); 
+
+app.delete('/users/:user', (req, res) => {
+    res.send('Successful delete user');
+}); 
 
 app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');

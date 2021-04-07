@@ -1,16 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Travel Films API</title>
+    <style>
+        code {
+            color: rgb(216, 57, 57);
+        }
+
+        span {
+            color: blue;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Time Travel Films API</h1>
     <h2>Documentation</h2>
     <p>Search time travel films by genre, actors or directors.</p>
 
-    
+    <ul>
+        <li>GET http://localhost:8080/movies<br>return JSON with movies list</li>
+        <li>GET http://localhost:8080/movies/<span>title</span><br>return JSON with description, genre, director, image
+            URL, whether it’s featured or not</li>
+        <li>GET http://localhost:8080/movies/<span>genre</span><br>return JSON with movies list</li>
+        <li>GET http://localhost:8080/movies/<span>director</span><br>return JSON with director bio, birth year and
+            death year</li>
+        <li>POST http://localhost:8080/users<br>send JSON: <code>{"user": "your_user_name"}</code><br>return Successful
+            message</li>
+        <li>PUT http://localhost:8080/users/<span>user</span><br>send JSON:
+            <code>{"user": "your_user_name"}</code><br>return Successful message</li>
+        <li>POST http://localhost:8080/users/<span>user</span>/favorites<br>send JSON:
+            <code>{"title": "film_title"}</code><br>return Successful message</li>
+        <li>DELETE http://localhost:8080/users/<span>user</span>/favorites/<span>title</span><br>return Successful
+            message</li>
+        <li>DELETE http://localhost:8080/users/<span>user</span><br>return Successful message</li>
+    </ul>
+
 </body>
+
 </html>
