@@ -26,18 +26,34 @@
         <li>GET http://localhost:8080/movies<br>return JSON with movies list</li>
         <li>GET http://localhost:8080/movies/<span>title</span><br>return JSON with description, genre, director, image
             URL, whether it’s featured or not</li>
-        <li>GET http://localhost:8080/movies/<span>genre</span><br>return JSON with movies list</li>
-        <li>GET http://localhost:8080/movies/<span>director</span><br>return JSON with director bio, birth year and
-            death year</li>
-        <li>POST http://localhost:8080/users<br>send JSON: <code>{"user": "your_user_name"}</code><br>return Successful
-            message</li>
+        <li>GET http://localhost:8080/genres/<span>genre</span><br>return JSON with movies list</li>
+        <li>GET http://localhost:8080/directors/<span>director</span><br>return JSON <code>{"Name": <"">, "Bio": <"">, "BirthDate": <"YYYY-MM-DD">, "DeathDate": <"YYYY-MM-DD">}</code></li>
+        <br>
+        <li>GET http://localhost:8080/users/<span>user</span><br>return JSON:
+            <code>{"Username": <"your_user_name">, "Password": <"">, "Email": <"">, "BirthDate": <"YYYY-MM-DD">}</code>/li>
+        <li>POST http://localhost:8080/users<br>send JSON: <code>{"Username": <"your_user_name">, "Password": <"">, "Email": <"">, "BirthDate": <"YYYY-MM-DD">}</code><br>return Successful message</li>
         <li>PUT http://localhost:8080/users/<span>user</span><br>send JSON:
-            <code>{"user": "your_user_name"}</code><br>return Successful message</li>
-        <li>POST http://localhost:8080/users/<span>user</span>/favorites<br>send JSON:
-            <code>{"title": "film_title"}</code><br>return Successful message</li>
-        <li>DELETE http://localhost:8080/users/<span>user</span>/favorites/<span>title</span><br>return Successful
-            message</li>
+            <code>{"Email": <"new_email">}</code><br>return Successful message</li>
         <li>DELETE http://localhost:8080/users/<span>user</span><br>return Successful message</li>
+        <br>
+        <li><strike>GET http://localhost:8080/users/<span>user</span>/myMovies</strike><br>
+            Use GET User
+            </li>
+        <li>POST http://localhost:8080/users/<span>user</span>/myMovies<br>send JSON:
+            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT": &lt;num/10&gt; "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code><br>return Successful message</li>
+        <li>PUT http://localhost:8080/users/<span>user</span>/myMovies<br>send JSON:
+            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT":  &lt;num/10&gt;, "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code><br>return Successful message</li>
+            <p>If you want to delete a movie or field in myMovies use PUT sending empty fields in the JSON:<br>
+            <code>{"Movie": <"movie_title">, "Score": "", "RelevanceTT":  "", "PlanToWatch": false, "Favorite": false}</code></p>
+        <!-- <br>
+        <li>PUT http://localhost:8080/users/<span>user</span>/favorite<br>send JSON:
+            <code>{"Movie": <"movie_title">, "Favorite": &lt;boolean&gt;}</code><br>return Successful message</li>
+        <li>PUT http://localhost:8080/users/<span>user</span>/score<br>send JSON:
+            <code>{"Movie": <"movie_title">, "Score":  &lt;num/10&gt;}</code><br>return Successful message</li>
+        <li>PUT http://localhost:8080/users/<span>user</span>/relevancett<br>send JSON:
+            <code>{"Movie": <"movie_title">, "RelevanceTT":  &lt;num/10&gt;}</code><br>return Successful message</li>
+        <li>PUT http://localhost:8080/users/<span>user</span>/plantowatch<br>send JSON:
+            <code>{"Movie": <"movie_title">, "PlanToWatch": &lt;boolean&gt;}</code><br>return Successful message</li>     -->
     </ul>
 
 </body>
