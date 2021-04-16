@@ -74,8 +74,8 @@ app.get('/movies/:Title', (req, res) => {
 //Get one Genre
 app.get('/genres/:Genre', (req, res) => {
     Genres.findOne({ Name: req.params.Genre })
-        .then((res) => {
-            res.json(res);
+        .then((e) => {
+            res.json(e);
         })
         .catch((err) => {
             err500(err)
@@ -85,8 +85,8 @@ app.get('/genres/:Genre', (req, res) => {
 //Get one Director
 app.get('/directors/:Director', (req, res) => {
     Directors.findOne({ Name: req.params.Director })
-        .then((res) => {
-            res.json(res);
+        .then((e) => {
+            res.json(e);
         })
         .catch((err) => {
             err500(err)
@@ -277,6 +277,10 @@ app.put('/users/:Username/myMovies', (req, res) => {
         }).catch(err => err500(err));
 });
 
+
+app.use(function(req, res, next) {
+    res.status(404).sendFile('public/documentation.html', { root: __dirname });
+});
 
 
 app.listen(8080, () => {
