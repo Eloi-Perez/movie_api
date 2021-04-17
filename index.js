@@ -1,12 +1,10 @@
 const express = require('express'),
     morgan = require('morgan'),
-    // bodyParser = require('body-parser'),
     mongoose = require('mongoose');
 
 const Models = require('./models.js');
 
 const app = express();
-// app.use(bodyParser.json());
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
@@ -14,7 +12,7 @@ const Movies = Models.Movie;
 const Genres = Models.Genre;
 const Directors = Models.Director;
 const Users = Models.User;
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true,  useFindAndModify: false });
 
 const err500 = (err) => {
     console.error(err);
@@ -118,14 +116,6 @@ app.get('/users/:Username', (req, res) => {
 });
 
 //Add an user
-/* We’ll expect JSON in this format
-{
-  ID: Integer,
-  Username: String,
-  Password: String,
-  Email: String,
-  BirthDate: Date
-}*/
 app.post('/users', (req, res) => {
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
@@ -151,13 +141,6 @@ app.post('/users', (req, res) => {
 });
 
 // Update a user's info, by username
-/* We’ll expect JSON in this format
-{
-  Username: String, (required)
-  Password: String, (required)
-  Email: String, (required)
-  BirthDate: Date
-}*/
 app.put('/users/:Username', (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $set:
@@ -200,7 +183,6 @@ app.delete('/users/:Username', (req, res) => {
 
 
 //Get user's myMovies -> Just use Get User
-
 
 
 // Add a movie to users's myMovies
