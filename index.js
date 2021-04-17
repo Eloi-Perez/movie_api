@@ -1,12 +1,16 @@
 const express = require('express'),
     morgan = require('morgan'),
+    passport = require('passport'),
     mongoose = require('mongoose');
-
-const Models = require('./models.js');
 
 const app = express();
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
+
+require('./passport.js');
+let auth = require('./auth')(app);
+
+const Models = require('./models.js');
 
 const Movies = Models.Movie;
 const Genres = Models.Genre;
@@ -50,10 +54,10 @@ app.get('/documentation.html', (req, res) => {
 });
 
 //Get all Movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
         .then((movies) => {
-            res.status(201).json(movies);
+            res.status(200).json(movies);
         })
         .catch((err) => {
             err500(err)
@@ -95,7 +99,7 @@ app.get('/directors/:Director', (req, res) => {
 // app.get('/users', (req, res) => {
 //     Users.find()
 //     .then((users) => {
-//         res.status(201).json(users);
+//         res.status(200).json(users);
 //     })
 //     .catch((err) => {
 //         console.error(err);
