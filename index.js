@@ -4,22 +4,15 @@ const express = require('express'),
     mongoose = require('mongoose'),
     morgan = require('morgan');
 
+const { check, validationResult } = require('express-validator');
+
 const app = express();
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
 
-// app.use(cors());//by Default all origins
-let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) { // If a specific origin isn’t found on the list of allowed origins
-            let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-            return callback(new Error(message), false);
-        }
-        return callback(null, true);
-    }
-}));
+
+
+
 
 require('./passport.js');
 let auth = require('./auth')(app);
@@ -47,10 +40,18 @@ function isEmpty(myVar) {
     return true;
 }
 
+let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) { // If a specific origin isn’t found on the list of allowed origins
+            let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
 
-// app.get('/', function (req, res, next) {
-//     next();
-// })
 app.use(morgan('common'));
 
 app.use((err, req, res, next) => {
@@ -135,7 +136,18 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 //Add an user
-app.post('/users', (req, res) => {
+app.post('/users', [
+    // Validation logic for request
+    check('Username', 'Username is required').isLength({min: 3}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').normalizeEmail().isEmail()
+], (req, res) => {
+    // check the validation object for errors
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
     let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
@@ -162,7 +174,14 @@ app.post('/users', (req, res) => {
 });
 
 // Update a user's info, by username
-app.put('/users/:Username', (req, res) => {//req old password and token
+app.put('/users/:Username', [
+    check('Username', 'Username is required').isLength({min: 3}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').optional().normalizeEmail().isEmail()
+], (req, res) => {////////////////////////////////////////////////// req old password + token
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) { return res.status(422).json({ errors: errors.array() }); }
     let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $set:
