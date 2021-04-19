@@ -12,14 +12,14 @@ app.use(express.json());
 let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
 app.use(cors({
     origin: (origin, callback) => {
-      if(!origin) return callback(null, true);
-      if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-        let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-        return callback(new Error(message ), false);
-      }
-      return callback(null, true);
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) { // If a specific origin isn’t found on the list of allowed origins
+            let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
     }
-  }));
+}));
 
 require('./passport.js');
 let auth = require('./auth')(app);
@@ -30,7 +30,7 @@ const Movies = Models.Movie;
 const Genres = Models.Genre;
 const Directors = Models.Director;
 const Users = Models.User;
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true,  useFindAndModify: false });
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const err500 = (err) => {
     console.error(err);
@@ -126,6 +126,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
     Users.findOne({ Username: req.params.Username })
         .populate('myMovies.Movie')
         .then((user) => {
+            user.Password = "";
             res.json(user);
         })
         .catch((err) => {
@@ -135,6 +136,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 
 //Add an user
 app.post('/users', (req, res) => {
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
@@ -142,13 +144,14 @@ app.post('/users', (req, res) => {
             } else {
                 Users.create({
                     Username: req.body.Username,
-                    Password: req.body.Password,
+                    Password: hashedPassword,
                     Email: req.body.Email,
                     BirthDate: req.body.BirthDate
                 })
-                    .then((user) => { res.status(201).json(user) })
+                    .then((user) => { user.Password = ""; res.status(201).json(user); })
                     .catch((err) => {
-                        err500(err)
+                        console.error(err);
+                        res.status(400).send('Error: ' + err);
                     })
             }
         })
@@ -159,12 +162,13 @@ app.post('/users', (req, res) => {
 });
 
 // Update a user's info, by username
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', (req, res) => {//req old password and token
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $set:
         {
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             BirthDate: req.body.BirthDate
         }
@@ -175,6 +179,7 @@ app.put('/users/:Username', (req, res) => {
                 err500(err)
             } else {
                 if (updatedUser) {
+                    updatedUser.Password = "";
                     res.json(updatedUser);
                 } else {
                     res.status(400).send(req.params.Username + ' was not found');
@@ -278,7 +283,7 @@ app.put('/users/:Username/myMovies', (req, res) => {
 });
 
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.status(404).sendFile('public/documentation.html', { root: __dirname });
 });
 

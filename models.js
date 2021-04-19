@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 let movieSchema = mongoose.Schema({
-    Title: {type: String, required: true},
-    Description: {type: String, required: true},
+    Title: { type: String, required: true },
+    Description: { type: String, required: true },
     Genre: { type: mongoose.Schema.Types.ObjectId, ref: 'Genre' },// genres ref to model here not db
     Director: { type: mongoose.Schema.Types.ObjectId, ref: 'Director' },
     ImagePath: String,
@@ -22,19 +23,26 @@ let directorSchema = mongoose.Schema({
 })
 
 let userSchema = mongoose.Schema({
-    Username: {type: String, required: true},
-    Password: {type: String, required: true},
-    Email: {type: String, required: true},
-    BirthDate: {type: Date, default: ''},
-    myMovies: [{ //Move to another collection?????
+    Username: { type: String, required: true },
+    Password: { type: String, required: true },
+    Email: { type: String, required: [true, 'Email needed'] },
+    BirthDate: { type: Date, default: '' },
+    myMovies: [{
         Movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie' },
-        // Movie: String,
-        Score: { type: Number, default: ''},
-        RelevanceTT: { type: Number, default: ''},
-        PlanToWatch: { type: Boolean, default: false},
-        Favorite: { type: Boolean, default: false}
+        Score: { type: Number, default: '' },//min: 0, max, 10,
+        RelevanceTT: { type: Number, default: '' },
+        PlanToWatch: { type: Boolean, default: false },
+        Favorite: { type: Boolean, default: false }
     }]
 });
+
+userSchema.statics.hashPassword = (password) => {
+    return bcrypt.hashSync(password, 10);
+};
+
+userSchema.methods.validatePassword = function (password) {
+    return bcrypt.compareSync(password, this.Password);
+};
 
 let Movie = mongoose.model('Movie', movieSchema);
 let Genre = mongoose.model('Genre', genreSchema);
