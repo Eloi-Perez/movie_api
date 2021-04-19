@@ -1,11 +1,25 @@
 const express = require('express'),
-    morgan = require('morgan'),
+    cors = require('cors'),
     passport = require('passport'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    morgan = require('morgan');
 
 const app = express();
 app.use(express.json());
 // app.use(express.urlencoded({extended: true}));
+
+// app.use(cors());//by Default all origins
+let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
+app.use(cors({
+    origin: (origin, callback) => {
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
+        let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+        return callback(new Error(message ), false);
+      }
+      return callback(null, true);
+    }
+  }));
 
 require('./passport.js');
 let auth = require('./auth')(app);
@@ -108,7 +122,7 @@ app.get('/directors/:Director', (req, res) => {
 // });
 
 // Get a user by username
-app.get('/users/:Username', (req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOne({ Username: req.params.Username })
         .populate('myMovies.Movie')
         .then((user) => {
