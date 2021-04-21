@@ -6,12 +6,12 @@ const express = require('express'),
 
 const { check, validationResult } = require('express-validator');
 
+require('dotenv').config();
+
 const app = express();
 app.use(express.json());
-// app.use(express.urlencoded({extended: true}));
-
-
-
+// app.use(express.urlencoded({extended: true})); // for res data like-> let data = "key1=value1&key2=value2"
+app.use(morgan('common'));
 
 
 require('./passport.js');
@@ -23,7 +23,7 @@ const Movies = Models.Movie;
 const Genres = Models.Genre;
 const Directors = Models.Director;
 const Users = Models.User;
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+mongoose.connect( process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const err500 = (err) => {
     console.error(err);
@@ -52,9 +52,12 @@ app.use(cors({
     }
 }));
 
-app.use(morgan('common'));
+
+
+//more middlewares here
 
 app.use((err, req, res, next) => {
+    //if (err) why not needed?
     console.error(err.stack);
     res.status(500).send('Something broke!');
 })
@@ -258,8 +261,9 @@ app.post('/users/:Username/myMovies', (req, res) => {
                                                     }
                                                 ]
                                             }
-                                        }, { validateModifiedOnly: true, new: true }) //omitUndefined: true,
+                                        }, { validateModifiedOnly: true, new: true })
                                         .then((updatedUser) => {
+                                            updatedUser.Password = "";
                                             return res.status(201).json(updatedUser);
                                         }).catch(err => err500(err));
                                 }
@@ -294,6 +298,7 @@ app.put('/users/:Username/myMovies', (req, res) => {
                                 }
                             }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
                             .then((updatedUser) => {
+                                updatedUser.Password = "";
                                 return res.status(201).json(updatedUser);
                             }).catch(err => err500(err));
                     }
@@ -311,7 +316,3 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
 });
-
-// Logging
-// User authentication
-// App routing

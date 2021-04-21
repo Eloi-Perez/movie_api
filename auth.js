@@ -1,12 +1,10 @@
-const jwtSecret = 'fd55aee26c2f0c5ca61672edba880c3ebc1bbb1efe87c01cf2fa4a12593f2b47'
-
 const jwt = require('jsonwebtoken'),
     passport = require('passport');
 
 require('./passport.js');
 
 let generateJWTToken = (user) => {
-    return jwt.sign(user, jwtSecret, {
+    return jwt.sign(user, process.env.JWT_KEY, {
         subject: user.Username, // Username to encode in the JWToken
         expiresIn: '7d',
         algorithm: 'HS256'
