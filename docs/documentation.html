@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Travel Films API</title>
+    <style>
+        code {
+            color: rgb(216, 57, 57);
+        }
+
+        span {
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Time Travel Films API</h1>
+    <h2>API Endpoints Documentation</h2>
+    <p>Search time travel films by genre, actors or directors.</p>
+
+    <ul>
+        <li>Request<br>
+            Method /Endpoint<br>
+            Request Body<br>
+            Response Body</li><br>
+        <li><b>Get a list of all the movies</b><br>
+            GET /movies<br>
+            Res: JSON with movies list.</li><br>
+        <li><b>Get a list of all featured movies</b><br>
+            GET /movies/featured<br>
+            Res: JSON with all featured movies.</li><br>
+        <li><b>Get Movie by title</b><br>
+            GET /movies/<span>&lt;title&gt;</span><br>
+            Res: JSON with description, genre, director, image URL, whether it’s featured or not.</li><br>
+        <li><b>Get genre by name</b><br>
+            GET /genres/<span>&lt;genre&gt;</span><br>
+            Res: JSON with Genre's info.</li><br>
+        <li><b>Get director by name</b><br>
+            GET /directors/<span>&lt;director&gt;</span><br>
+            Res: JSON with Director's info.</li><br>
+        <br>
+        <li><b>Get User info and movies list from User</b><br>
+            GET /users/<span>&lt;user&gt;</span><br>
+            Res: JSON with User info and movies list from User.</li><br>
+        <li><b>Register user</b><br>
+            POST /users<br>
+            Req: JSON
+            <code>{"Username": <"your_user_name">, "Password": <"your_password">, "Email": <"your@email.com">, "BirthDate": <"YYYY-MM-DD">}</code><br>
+            Res: Successful message.</li><br>
+        <li><b>Login</b><br>
+            POST /login<br>
+            Req: JSON <code>{"Username": <"your_user_name">, "Password": <"your_password">}</code><br>
+            Res: Successful message.</li><br>
+        <li><b>Update user</b><br>
+            PUT /users<br>
+            Req: JSON
+            <code>{"Username": <"your_user_name">, "Password": <"your_password">, "NewUsername": <"your_new_user_name">, "NewPassword": <"new_password">, "NewEmail": <"new_email">, "BirthDate": <"YYYY-MM-DD">}</code>
+            Only "Username" and "Password" are mandatory for authentication purposes.<br>
+            Res: Successful message.</li><br>
+        <li><b>Delete user</b><br>
+            DELETE /users<br>
+            Req: JSON <code>{"Username": <"your_user_name">, "Password": <"your_password">}</code><br>
+            Res: Successful message.</li><br>
+        <br>
+        <li><b>Add movie to user list</b><br>
+            POST /users/<span>&lt;user&gt;</span>/myMovies<br>
+            Req: JSON
+            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT": &lt;num/10&gt; "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code><br>
+            Res: Successful message.</li><br>
+        <li><b>Update movie attributes from user list</b><br>
+            PUT /users/<span>&lt;user&gt;</span>/myMovies<br>
+            Req: JSON
+            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT":  &lt;num/10&gt;, "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code>
+            Only the "Movie" filed is mandatory.<br>
+            Res: Successful message.</li>
+        <p>If you want to delete a movie or field in myMovies use PUT sending empty fields in the JSON:<br>
+            <code>{"Movie": <"movie_title">, "Score": "", "RelevanceTT":  "", "PlanToWatch": false, "Favorite": false}</code>
+        </p>
+    </ul>
+
+</body>
+
+</html>
