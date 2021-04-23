@@ -95,7 +95,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
 
 //Get Movies Featured
 app.get('/movies/featured', (req, res) => {
-    Movies.find({"Featured": true})
+    Movies.find({ "Featured": true })
         .then((movies) => {
             res.status(200).json(movies);
         })
@@ -161,7 +161,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), ch
 });
 
 //Add an user
-app.post('/users', [
+app.post('/users', [                  //could generete JWT here
     // Validation logic for request
     check('Username', 'Username is required').isLength({ min: 3 }),
     check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -257,77 +257,61 @@ app.delete('/users', passport.authenticate('local', { session: false }), (req, r
 
 // Add a movie to users's myMovies
 app.post('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
-    Users.findOne({ Username: req.params.Username })
-        .then((user) => {
-            Movies.findOne({ Title: req.body.Movie })
-                .then((mov) => {
-                    if (!user && !mov) {
-                        return res.status(400).send(req.params.Username + ' was not found \nand\n' + req.body.Movie + ' was not found');
-                    } else if (!user) {
-                        return res.status(400).send(req.params.Username + ' was not found');
-                    } else if (!mov) {
-                        return res.status(400).send(req.body.Movie + ' was not found');
-                    } else if (user && mov) {
-                        Users.find({ Username: req.params.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) })
-                            .then(movInUser => {
-                                if (!isEmpty(movInUser)) {
-                                    return res.status(400).send(req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies');
-                                } else if (isEmpty(movInUser)) {
-                                    Users.findOneAndUpdate({ Username: req.user.Username },
-                                        {                   //Using User from Token
-                                            $push: {
-                                                myMovies: [
-                                                    {
-                                                        Movie: mongoose.Types.ObjectId(mov._id),
-                                                        Score: req.body.Score,
-                                                        RelevanceTT: req.body.RelevanceTT,
-                                                        PlanToWatch: req.body.PlanToWatch,
-                                                        Favorite: req.body.Favorite
-                                                    }
-                                                ]
+    Movies.findOne({ Title: req.body.Movie })
+        .then((mov) => {
+            if (!mov) {
+                return res.status(400).send(req.body.Movie + ' was not found');
+            } else if (mov) {
+                Users.find({ Username: req.params.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) })
+                    .then(movInUser => {
+                        if (!isEmpty(movInUser)) {
+                            return res.status(400).send(req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies');
+                        } else if (isEmpty(movInUser)) {
+                            Users.findOneAndUpdate({ Username: req.user.Username },
+                                {                   //Using User from Token
+                                    $push: {
+                                        myMovies: [
+                                            {
+                                                Movie: mongoose.Types.ObjectId(mov._id),
+                                                Score: req.body.Score,
+                                                RelevanceTT: req.body.RelevanceTT,
+                                                PlanToWatch: req.body.PlanToWatch,
+                                                Favorite: req.body.Favorite
                                             }
-                                        }, { validateModifiedOnly: true, new: true })
-                                        .then((updatedUser) => {
-                                            updatedUser.Password = "secretPassword";
-                                            return res.status(201).json(updatedUser);
-                                        }).catch(err => err500(err));
-                                }
-                            }).catch(err => err500(err));
-                    }
-                }).catch(err => err500(err));
+                                        ]
+                                    }
+                                }, { validateModifiedOnly: true, new: true })
+                                .then((updatedUser) => {
+                                    updatedUser.Password = "secretPassword";
+                                    return res.status(201).json(updatedUser);
+                                }).catch(err => err500(err));
+                        }
+                    }).catch(err => err500(err));
+            }
         }).catch(err => err500(err));
-
-
 });
 
 // Update a movie to a user's list of favorites
 app.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
-    Users.findOne({ Username: req.params.Username })
-        .then((user) => {
-            Movies.findOne({ Title: req.body.Movie })
-                .then((mov) => {
-                    if (!user && !mov) {
-                        return res.status(400).send(req.params.Username + ' was not found \nand\n' + req.body.Movie + ' was not found');
-                    } else if (!user) {
-                        return res.status(400).send(req.params.Username + ' was not found');
-                    } else if (!mov) {
-                        return res.status(400).send(req.body.Movie + ' was not found');
-                    } else if (user && mov) {
-                        Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
-                            {
-                                $set: {
-                                    'myMovies.$[elem].Score': req.body.Score,
-                                    'myMovies.$[elem].RelevanceTT': req.body.RelevanceTT,
-                                    'myMovies.$[elem].PlanToWatch': req.body.PlanToWatch,
-                                    'myMovies.$[elem].Favorite': req.body.Favorite
-                                }
-                            }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
-                            .then((updatedUser) => {
-                                updatedUser.Password = "secretPassword";
-                                return res.status(201).json(updatedUser);
-                            }).catch(err => err500(err));
-                    }
-                }).catch(err => err500(err));
+    Movies.findOne({ Title: req.body.Movie })
+        .then((mov) => {
+            if (!mov) {
+                return res.status(400).send(req.body.Movie + ' was not found');
+            } else if (mov) {
+                Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
+                    {
+                        $set: {
+                            'myMovies.$[elem].Score': req.body.Score,
+                            'myMovies.$[elem].RelevanceTT': req.body.RelevanceTT,
+                            'myMovies.$[elem].PlanToWatch': req.body.PlanToWatch,
+                            'myMovies.$[elem].Favorite': req.body.Favorite
+                        }
+                    }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
+                    .then((updatedUser) => {
+                        updatedUser.Password = "secretPassword";
+                        return res.status(201).json(updatedUser);
+                    }).catch(err => err500(err));
+            }
         }).catch(err => err500(err));
 });
 
