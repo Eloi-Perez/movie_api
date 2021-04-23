@@ -5,10 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Travel Films API</title>
+    <title>Movie API</title>
     <style>
+        body {
+            font-size: 20px;
+        }
         code {
             color: rgb(216, 57, 57);
+            font-size: 16px;
         }
 
         span {
@@ -18,9 +22,9 @@
 </head>
 
 <body>
-    <h1>Time Travel Films API</h1>
+    <h1>Movie API</h1>
     <h2>API Endpoints Documentation</h2>
-    <p>Search time travel films by genre, actors or directors.</p>
+    <p>Search movies by name and featured or set score and favorite in user's movie list</p>
 
     <ul>
         <li>Request<br>
@@ -58,7 +62,7 @@
         <li><b>Update user</b><br>
             PUT /users<br>
             Req: JSON
-            <code>{"Username": <"your_user_name">, "Password": <"your_password">, "NewUsername": <"your_new_user_name">, "NewPassword": <"new_password">, "NewEmail": <"new_email">, "BirthDate": <"YYYY-MM-DD">}</code>
+            <code>{"Username": <"your_user_name">, "Password": <"your_password">, "NewUsername": <"your_new_user_name">, "NewPassword": <"new_password">, "NewEmail": <"new_email">, "BirthDate": <"YYYY-MM-DD">}</code><br>
             Only "Username" and "Password" are mandatory for authentication purposes.<br>
             Res: Successful message.</li><br>
         <li><b>Delete user</b><br>
@@ -74,7 +78,7 @@
         <li><b>Update movie attributes from user list</b><br>
             PUT /users/<span>&lt;user&gt;</span>/myMovies<br>
             Req: JSON
-            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT":  &lt;num/10&gt;, "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code>
+            <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT":  &lt;num/10&gt;, "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code><br>
             Only the "Movie" filed is mandatory.<br>
             Res: Successful message.</li>
         <p>If you want to delete a movie or field in myMovies use PUT sending empty fields in the JSON:<br>
