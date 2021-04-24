@@ -135,11 +135,11 @@ app.get('/directors/:Director', passport.authenticate('jwt', { session: false })
         });
 });
 
-//Get all users
-// app.get('/users', (req, res) => {
+// //Get all users
+// app.get('/users', (req, res) => { //Admin auth?
 //     Users.find()
 //     .then((users) => {
-//         res.status(200).json(users);
+//         res.status(200).json({user: users.map( userItem => ({ Username: userItem.Username, myMovies: userItem.myMovies }) ) });
 //     })
 //     .catch((err) => {
 //         console.error(err);
@@ -147,13 +147,12 @@ app.get('/directors/:Director', passport.authenticate('jwt', { session: false })
 //     });
 // });
 
-// Get a user by username
+// Get a user by username + myMovies list in User
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
     Users.findOne({ Username: req.params.Username })
         .populate('myMovies.Movie')
         .then((user) => {
-            user.Password = "secretPassword";
-            res.json(user);
+            res.status(200).json({ Username: user.Username, myMovies: user.myMovies });
         })
         .catch((err) => {
             err500(err)
@@ -185,7 +184,9 @@ app.post('/users', [                  //could generete JWT here
                     Email: req.body.Email,
                     BirthDate: req.body.BirthDate
                 })
-                    .then((user) => { user.Password = "secretPassword"; res.status(201).json(user); })
+                    .then((user) => { 
+                        res.status(201).json({Message: "Created Successfully", Username: user.Username});
+                    })
                     .catch((err) => {
                         console.error(err);
                         res.status(400).send('Error: ' + err);
@@ -226,8 +227,7 @@ app.put('/users', passport.authenticate('local', { session: false }), [
                 err500(err)
             } else {
                 if (updatedUser) {
-                    updatedUser.Password = "secretPassword";
-                    res.json(updatedUser);
+                    res.status(200).json({Message: "Updated Successfully", Username: updatedUser.Username});
                 } else {
                     res.status(400).send(req.params.Username + ' was not found');
                 }
@@ -250,9 +250,6 @@ app.delete('/users', passport.authenticate('local', { session: false }), (req, r
             err500(err)
         });
 });
-
-
-//Get user's myMovies -> Just use Get User
 
 
 // Add a movie to users's myMovies
@@ -282,8 +279,7 @@ app.post('/users/:Username/myMovies', passport.authenticate('jwt', { session: fa
                                     }
                                 }, { validateModifiedOnly: true, new: true })
                                 .then((updatedUser) => {
-                                    updatedUser.Password = "secretPassword";
-                                    return res.status(201).json(updatedUser);
+                                    return res.status(201).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
                                 }).catch(err => err500(err));
                         }
                     }).catch(err => err500(err));
@@ -308,8 +304,7 @@ app.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: fal
                         }
                     }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
                     .then((updatedUser) => {
-                        updatedUser.Password = "secretPassword";
-                        return res.status(201).json(updatedUser);
+                        return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
                     }).catch(err => err500(err));
             }
         }).catch(err => err500(err));
