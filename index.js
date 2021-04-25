@@ -27,6 +27,7 @@ const Users = Models.User;
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //My Functions
+///Error 500
 const err500 = (err) => {
     console.error(err);
     res.status(500).send('Error: ' + err);
@@ -75,11 +76,11 @@ app.use((err, req, res, next) => {
 
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the Time Travel Films API');
+    res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
 });
 
 app.get('/documentation.html', (req, res) => {
-    res.sendFile('public/documentation.html', { root: __dirname })
+    res.sendFile('docs/index.html', { root: __dirname })
 });
 
 //Get all Movies
@@ -160,7 +161,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), ch
 });
 
 //Add an user
-app.post('/users', [                  //could generete JWT here
+app.post('/users', [                 
     // Validation logic for request
     check('Username', 'Username is required').isLength({ min: 3 }),
     check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -184,7 +185,7 @@ app.post('/users', [                  //could generete JWT here
                     Email: req.body.Email,
                     BirthDate: req.body.BirthDate
                 })
-                    .then((user) => { 
+                    .then((user) => {  //could generete JWT here
                         res.status(201).json({Message: "Created Successfully", Username: user.Username});
                     })
                     .catch((err) => {
@@ -312,7 +313,7 @@ app.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: fal
 
 
 app.use(function (req, res, next) {
-    res.status(404).sendFile('public/documentation.html', { root: __dirname });
+    res.status(404).sendFile('docs/', { root: __dirname });
 });
 
 
