@@ -18,6 +18,7 @@ const err500 = (err) => {
     console.error(err);
     res.status(500).json({error: err});
 };
+
 ///Check for empty array variable
 function isEmpty(myVar) {
     for (var key in myVar) {
@@ -27,8 +28,9 @@ function isEmpty(myVar) {
     }
     return true;
 }
-// const myObj = {};
-// !!Object.keys(myObj).length; //!! -> true or false
+// const myVar = {};
+// !!Object.keys(myVar).length; //!! -> true or false
+
 ///Compare Passport User and URL :User
 function checkUser(req, res, next) {
     if (req.user.Username === req.params.Username) {
