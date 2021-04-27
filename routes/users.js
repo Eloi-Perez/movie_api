@@ -16,7 +16,7 @@ const Users = Models.User;
 ///Error 500
 const err500 = (err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json({error: err});
 };
 ///Check for empty array variable
 function isEmpty(myVar) {
@@ -64,7 +64,7 @@ router.post('/users', [
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
-                return res.status(400).send('Username: ' + req.body.Username + ' already exist');
+                return res.status(400).json({ Message: 'Username: ' + req.body.Username + ' already exist'});
             } else {
                 Users.create({
                     Username: req.body.Username,
@@ -74,9 +74,9 @@ router.post('/users', [
                 })
                     .then((user) => {  
                         //generete JWT here
-                        req.login(user, { session: false }, (error) => {
-                            if (error) {
-                                res.send(error);
+                        req.login(user, { session: false }, (err) => {
+                            if (err) {
+                                res.json({ Error: err });
                             }
                             let payload = {}
                             payload._id = user._id;
@@ -87,7 +87,7 @@ router.post('/users', [
                     })
                     .catch((err) => {
                         console.error(err);
-                        res.status(400).send('Error: ' + err);
+                        res.status(400).json({ Error: err });
                     })
             }
         })
@@ -101,14 +101,14 @@ router.post('/login', (req, res) => {
     passport.authenticate('local', { session: false }, (error, user, info) => {
         if (error || !user) {
             return res.status(400).json({
-                message: 'Something is not right',
+                Message: 'Something is not right',
                 // user: user,
-                error: info
+                Error: info
             });
         }
         req.login(user, { session: false }, (error) => {
             if (error) {
-                res.send(error);
+                res.json({ Error: error });
             }
             let payload = {}
             payload._id = user._id;
@@ -128,7 +128,7 @@ router.post('/login', (req, res) => {
 //     })
 //     .catch((err) => {
 //         console.error(err);
-//         res.status(500).send('Error: ' + err);
+//         res.status(500).json({ Error: err });
 //     });
 // });
 
@@ -176,7 +176,7 @@ router.put('/users', passport.authenticate('local', { session: false }), [
                 if (updatedUser) {
                     res.status(200).json({ Message: "Updated Successfully", Username: updatedUser.Username });
                 } else {
-                    res.status(400).send(req.params.Username + ' was not found');
+                    res.status(400).json({ Message: req.params.Username + ' was not found'});
                 }
             }
         }
@@ -188,9 +188,9 @@ router.delete('/users', passport.authenticate('local', { session: false }), (req
     Users.findOneAndRemove({ Username: req.body.Username })
         .then((user) => {
             if (!user) {
-                res.status(400).send(req.body.Username + ' was not found');//not in use because auth
+                res.status(400).json({ Message: req.body.Username + ' was not found' });//not in use because auth
             } else {
-                res.status(200).send(req.body.Username + ' was deleted.');
+                res.status(200).json({ Message: req.body.Username + ' was deleted.' });
             }
         })
         .catch((err) => {
@@ -203,12 +203,12 @@ router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session:
     Movies.findOne({ Title: req.body.Movie })
         .then((mov) => {
             if (!mov) {
-                return res.status(400).send(req.body.Movie + ' was not found');
+                return res.status(400).json({ Message: req.body.Movie + ' was not found' });
             } else if (mov) {
                 Users.find({ Username: req.params.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) })
                     .then(movInUser => {
                         if (!isEmpty(movInUser)) {
-                            return res.status(400).send(req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies');
+                            return res.status(400).json({ Message: req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies' });
                         } else if (isEmpty(movInUser)) {
                             Users.findOneAndUpdate({ Username: req.user.Username },
                                 {                   //Using User from Token
@@ -238,7 +238,7 @@ router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: 
     Movies.findOne({ Title: req.body.Movie })
         .then((mov) => {
             if (!mov) {
-                return res.status(400).send(req.body.Movie + ' was not found');
+                return res.status(400).json({ Message: req.body.Movie + ' was not found' });
             } else if (mov) {
                 Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
                     {
@@ -253,7 +253,7 @@ router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: 
                         if(updatedUser) {
                             return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
                         } else {
-                            return res.status(400).send(req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies');
+                            return res.status(400).json({ Message: req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies' });
                         }
                     }).catch(err => err500(err));
             }

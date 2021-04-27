@@ -14,7 +14,7 @@ const Directors = Models.Director;
 ///Error 500
 const err500 = (err) => {
     console.error(err);
-    res.status(500).send('Error: ' + err);
+    res.status(500).json({error: err});
 };
 
 
