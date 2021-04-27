@@ -16,17 +16,6 @@ app.use(morgan('common'));
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
-//My Functions
-///Check for empty array variable
-function isEmpty(myVar) {
-    for (var key in myVar) {
-        if (myVar.hasOwnProperty(key)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 //CORS
 let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
 app.use(cors({
@@ -40,26 +29,9 @@ app.use(cors({
     }
 }));
 
-//execute more middlewares here
-
-app.use((err, req, res, next) => {
-    //if (err) //why 'if' not needed?
-    console.error(err.stack);
-    res.status(500).send('Something broke!'); //will work only when app start
-})
-
-// app.use((err, req, res, next) => {
-//     if (err) {
-//     console.error(err.stack);
-//     res.status(500).send('Something broke!'); 
-//     } else {
-//         next();
-//     }
-// })
-
 //Routes
-app.use('/', users);
 app.use('/', movies);
+app.use('/', users);
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
 });
@@ -67,11 +39,16 @@ app.get('/documentation.html', (req, res) => {
     res.sendFile('docs/documentation.html', { root: __dirname })
 });
 
+//Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ Error: err });
+})
+
 //Error404
 app.use(function (req, res, next) {
     res.status(404).sendFile('docs/documentation.html', { root: __dirname });
 });
-
 
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
