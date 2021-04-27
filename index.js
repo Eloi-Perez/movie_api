@@ -80,7 +80,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/documentation.html', (req, res) => {
-    res.sendFile('docs/index.html', { root: __dirname })
+    res.sendFile('docs/documentation.html', { root: __dirname })
 });
 
 //Get all Movies
@@ -313,7 +313,7 @@ app.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: fal
 
 
 app.use(function (req, res, next) {
-    res.status(404).sendFile('docs/', { root: __dirname });
+    res.status(404).sendFile('docs/documentation.html', { root: __dirname });
 });
 
 
