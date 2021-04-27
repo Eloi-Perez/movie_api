@@ -45,7 +45,7 @@ app.use(cors({
 app.use((err, req, res, next) => {
     //if (err) //why 'if' not needed?
     console.error(err.stack);
-    res.status(500).send('Something broke!'); //will work nly when app start
+    res.status(500).send('Something broke!'); //will work only when app start
 })
 
 // app.use((err, req, res, next) => {
