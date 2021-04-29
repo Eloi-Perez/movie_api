@@ -18,7 +18,7 @@ app.use(morgan('common'));
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //CORS
-let allowedOrigins = ['http://localhost:8080', 'http://test.com'];
+let allowedOrigins = ['http://localhost:8080', 'http://localhost:1234'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
