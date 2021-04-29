@@ -1,7 +1,8 @@
 const express = require('express'),
     cors = require('cors'),
     mongoose = require('mongoose'),
-    morgan = require('morgan');
+    morgan = require('morgan'),
+    fs = require('fs');
 
 require('dotenv').config();
 
@@ -29,21 +30,37 @@ app.use(cors({
     }
 }));
 
+
 //Routes
 app.use('/', movies);
 app.use('/', users);
+
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
 });
+
 app.get('/documentation.html', (req, res) => {
     res.sendFile('docs/documentation.html', { root: __dirname })
 });
 
+app.get('/img/:Title', (req, res) => {
+    fs.access(`public/images/${req.params.Title}.jpg`, fs.constants.R_OK, (err) => {
+        if (err) {
+            console.error('File does not exist\nPath: ' + err.path);
+            res.status(404).json({ Error: req.params.Title + ' image was not found' });
+        } else {
+            res.sendFile(`public/images/${req.params.Title}.jpg`, { root: __dirname });
+        }
+    });
+});
+
+
 //Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ Error: err });
-})
+    res.status(500).json({ Error: 'Something broke!' });
+    // res.status(500).json({ Error: err.toString() });
+});
 
 //Error404
 app.use(function (req, res, next) {
