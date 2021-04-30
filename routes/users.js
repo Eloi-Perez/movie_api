@@ -137,7 +137,7 @@ router.post('/login', (req, res) => {
 // Get a user by username + myMovies list in User
 router.get('/users/:Username', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
     Users.findOne({ Username: req.params.Username })
-        .populate('myMovies.Movie')
+        .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
         .then((user) => {
             res.status(200).json({ Username: user.Username, myMovies: user.myMovies });
         })
@@ -226,6 +226,7 @@ router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session:
                                         ]
                                     }
                                 }, { validateModifiedOnly: true, new: true })
+                                .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
                                 .then((updatedUser) => {
                                     return res.status(201).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
                                 }).catch(err => err500(err));
@@ -251,6 +252,7 @@ router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: 
                             'myMovies.$[elem].Favorite': req.body.Favorite
                         }
                     }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
+                    .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
                     .then((updatedUser) => {
                         if(updatedUser) {
                             return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
