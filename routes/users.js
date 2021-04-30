@@ -16,7 +16,7 @@ const Users = Models.User;
 ///Error 500
 const err500 = (err) => {
     console.error(err);
-    res.status(500).json({error: err});
+    res.status(500).json({ error: err });
 };
 
 ///Check for empty array variable
@@ -36,7 +36,7 @@ function checkUser(req, res, next) {
     if (req.user.Username === req.params.Username) {
         next()
     } else {
-        return res.status(401).json({error: 'Unauthorized'});
+        return res.status(401).json({ error: 'Unauthorized' });
     }
 }
 
@@ -66,7 +66,7 @@ router.post('/users', [
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
-                return res.status(400).json({ Message: 'Username: ' + req.body.Username + ' already exist'});
+                return res.status(400).json({ Message: 'Username: ' + req.body.Username + ' already exist' });
             } else {
                 Users.create({
                     Username: req.body.Username,
@@ -74,7 +74,7 @@ router.post('/users', [
                     Email: req.body.Email,
                     BirthDate: req.body.BirthDate
                 })
-                    .then((user) => {  
+                    .then((user) => {
                         //generete JWT here
                         req.login(user, { session: false }, (err) => {
                             if (err) {
@@ -85,7 +85,7 @@ router.post('/users', [
                             payload.Username = user.Username;
                             let token = generateJWTToken(payload);
                             return res.status(201).json({ Message: "Created Successfully", Username: user.Username, token });
-                        });                        
+                        });
                     })
                     .catch((err) => {
                         console.error(err);
@@ -178,7 +178,7 @@ router.put('/users', passport.authenticate('local', { session: false }), [
                 if (updatedUser) {
                     res.status(200).json({ Message: "Updated Successfully", Username: updatedUser.Username });
                 } else {
-                    res.status(400).json({ Message: req.params.Username + ' was not found'});
+                    res.status(400).json({ Message: req.params.Username + ' was not found' });
                 }
             }
         }
@@ -201,7 +201,16 @@ router.delete('/users', passport.authenticate('local', { session: false }), (req
 });
 
 // Add a movie to users's myMovies
-router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
+router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [
+    check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")), //.optional().isInt({ min: 0, max: 10 }.custom((value, { req })
+    check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === ""))
+], (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     Movies.findOne({ Title: req.body.Movie })
         .then((mov) => {
             if (!mov) {
@@ -237,7 +246,16 @@ router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session:
 });
 
 // Update a movie to a user's list of favorites
-router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
+router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [
+    check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")),
+    check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === ""))
+], (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     Movies.findOne({ Title: req.body.Movie })
         .then((mov) => {
             if (!mov) {
@@ -254,7 +272,7 @@ router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: 
                     }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
                     .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
                     .then((updatedUser) => {
-                        if(updatedUser) {
+                        if (updatedUser) {
                             return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
                         } else {
                             return res.status(400).json({ Message: req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies' });
