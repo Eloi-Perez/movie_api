@@ -14,7 +14,7 @@ const Directors = Models.Director;
 ///Error 500
 const err500 = (err) => {
     console.error(err);
-    res.status(500).json({error: err});
+    res.status(500).json({ error: err });
 };
 
 
@@ -22,6 +22,8 @@ const err500 = (err) => {
 //Get all Movies
 router.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
+        .populate('Genre', 'Name')
+        .populate('Director', 'Name')
         .then((movies) => {
             res.status(200).json(movies);
         })
@@ -33,6 +35,8 @@ router.get('/movies', passport.authenticate('jwt', { session: false }), (req, re
 //Get Movies Featured
 router.get('/movies/featured', (req, res) => {
     Movies.find({ "Featured": true })
+        .populate({ path: 'Genre', select: 'Name' })
+        .populate('Director', 'Name')
         .then((movies) => {
             res.status(200).json(movies);
         })
