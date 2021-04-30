@@ -29,7 +29,7 @@ let userSchema = mongoose.Schema({
     BirthDate: { type: Date, default: '' },
     myMovies: [{
         Movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie' },
-        Score: { type: Number, default: '' },//min: 0, max, 10,
+        Score: { type: Number, default: '' },//,min: 0, max: 10
         RelevanceTT: { type: Number, default: '' },
         PlanToWatch: { type: Boolean, default: false },
         Favorite: { type: Boolean, default: false }
