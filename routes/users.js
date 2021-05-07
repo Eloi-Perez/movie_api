@@ -135,7 +135,7 @@ router.post('/login', (req, res) => {
 // });
 
 // Get a user by username + myMovies list in User
-router.get('/users/:Username', passport.authenticate('jwt', { session: false }), checkUser, (req, res) => {
+router.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOne({ Username: req.params.Username })
         .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
         .then((user) => {
