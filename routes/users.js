@@ -139,7 +139,11 @@ router.get('/users/:Username', passport.authenticate('jwt', { session: false }),
     Users.findOne({ Username: req.params.Username })
         .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
         .then((user) => {
-            res.status(200).json({ Username: user.Username, myMovies: user.myMovies });
+            if (user){
+                res.status(200).json({ Username: user.Username, myMovies: user.myMovies });
+            } else {
+                res.status(400).json({ Message: 'Username: ' + req.params.Username + ' was not found' });
+            }
         })
         .catch((err) => {
             err500(err)
