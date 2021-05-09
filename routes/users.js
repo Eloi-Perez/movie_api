@@ -139,7 +139,7 @@ router.get('/users/:Username', passport.authenticate('jwt', { session: false }),
     Users.findOne({ Username: req.params.Username })
         .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
         .then((user) => {
-            if (user){
+            if (user) {
                 res.status(200).json({ Username: user.Username, myMovies: user.myMovies });
             } else {
                 res.status(400).json({ Message: 'Username: ' + req.params.Username + ' was not found' });
@@ -204,8 +204,8 @@ router.delete('/users', passport.authenticate('local', { session: false }), (req
         });
 });
 
-// Add a movie to users's myMovies
-router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [
+// Update or Add a movie to users's myMovies
+router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [ //.post
     check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
         .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")), //.optional().isInt({ min: 0, max: 10 }.custom((value, { req })
     check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
@@ -223,8 +223,28 @@ router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session:
                 Users.find({ Username: req.params.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) })
                     .then(movInUser => {
                         if (!isEmpty(movInUser)) {
-                            return res.status(400).json({ Message: req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies' });
+                            //Update if already in myMovies
+                            Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
+                                {
+                                    $set: {
+                                        'myMovies.$[elem].Score': req.body.Score,
+                                        'myMovies.$[elem].RelevanceTT': req.body.RelevanceTT,
+                                        'myMovies.$[elem].PlanToWatch': req.body.PlanToWatch,
+                                        'myMovies.$[elem].Favorite': req.body.Favorite
+                                    }
+                                }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
+                                .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
+                                .then((updatedUser) => {
+                                    if (updatedUser) {
+                                        return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
+                                    } else {
+                                        return res.status(400).json({ Message: req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies' });
+                                    }
+                                }).catch(err => err500(err));
+
+                            // return res.status(400).json({ Message: req.body.Movie + ' already exist in ' + req.params.Username + '\'s myMovies' });
                         } else if (isEmpty(movInUser)) {
+                            //Push if not in myMovies
                             Users.findOneAndUpdate({ Username: req.user.Username },
                                 {                   //Using User from Token
                                     $push: {
@@ -250,41 +270,41 @@ router.post('/users/:Username/myMovies', passport.authenticate('jwt', { session:
 });
 
 // Update a movie to a user's list of favorites
-router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [
-    check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
-        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")),
-    check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
-        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === ""))
-], (req, res) => {
-    let errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-    }
-    Movies.findOne({ Title: req.body.Movie })
-        .then((mov) => {
-            if (!mov) {
-                return res.status(400).json({ Message: req.body.Movie + ' was not found' });
-            } else if (mov) {
-                Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
-                    {
-                        $set: {
-                            'myMovies.$[elem].Score': req.body.Score,
-                            'myMovies.$[elem].RelevanceTT': req.body.RelevanceTT,
-                            'myMovies.$[elem].PlanToWatch': req.body.PlanToWatch,
-                            'myMovies.$[elem].Favorite': req.body.Favorite
-                        }
-                    }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
-                    .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
-                    .then((updatedUser) => {
-                        if (updatedUser) {
-                            return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
-                        } else {
-                            return res.status(400).json({ Message: req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies' });
-                        }
-                    }).catch(err => err500(err));
-            }
-        }).catch(err => err500(err));
-});
+// router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [
+//     check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
+//         .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")),
+//     check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
+//         .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === ""))
+// ], (req, res) => {
+//     let errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(422).json({ errors: errors.array() });
+//     }
+//     Movies.findOne({ Title: req.body.Movie })
+//         .then((mov) => {
+//             if (!mov) {
+//                 return res.status(400).json({ Message: req.body.Movie + ' was not found' });
+//             } else if (mov) {
+//                 Users.findOneAndUpdate({ Username: req.user.Username, "myMovies.Movie": mongoose.Types.ObjectId(mov._id) },
+//                     {
+//                         $set: {
+//                             'myMovies.$[elem].Score': req.body.Score,
+//                             'myMovies.$[elem].RelevanceTT': req.body.RelevanceTT,
+//                             'myMovies.$[elem].PlanToWatch': req.body.PlanToWatch,
+//                             'myMovies.$[elem].Favorite': req.body.Favorite
+//                         }
+//                     }, { arrayFilters: [{ 'elem.Movie': mongoose.Types.ObjectId(mov._id) }], validateModifiedOnly: true, omitUndefined: true, new: true })
+//                     .populate({ path: 'myMovies.Movie', select: ['Title', 'ImagePath'] })
+//                     .then((updatedUser) => {
+//                         if (updatedUser) {
+//                             return res.status(200).json({ Username: updatedUser.Username, myMovies: updatedUser.myMovies });
+//                         } else {
+//                             return res.status(400).json({ Message: req.body.Movie + ' was not found in ' + req.params.Username + '\'s myMovies' });
+//                         }
+//                     }).catch(err => err500(err));
+//             }
+//         }).catch(err => err500(err));
+// });
 
 
 module.exports = router;

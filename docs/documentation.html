@@ -70,11 +70,15 @@
             Req: JSON <code>{"Username": <"your_user_name">, "Password": <"your_password">}</code><br>
             Res: Successful message.</li><br>
         <br>
-        <li><b>Add movie to user list</b><br>
+        <li>
+        <strike>
+        <b>Add movie to user list</b><br>
             POST /users/<span>&lt;user&gt;</span>/myMovies<br>
             Req: JSON
             <code>{"Movie": <"movie_title">, "Score": &lt;num/10&gt;, "RelevanceTT": &lt;num/10&gt; "PlanToWatch": &lt;boolean&gt;, "Favorite": &lt;boolean&gt;}</code><br>
-            Res: Successful message.</li><br>
+            Res: Successful message.
+        </strike>
+        </li><br>
         <li><b>Update movie attributes from user list</b><br>
             PUT /users/<span>&lt;user&gt;</span>/myMovies<br>
             Req: JSON
