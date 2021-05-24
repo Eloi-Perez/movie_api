@@ -207,9 +207,9 @@ router.delete('/users', passport.authenticate('local', { session: false }), (req
 // Update or Add a movie to users's myMovies
 router.put('/users/:Username/myMovies', passport.authenticate('jwt', { session: false }), checkUser, [ //.post
     check('Score', 'Score must be an integer number between 0 and 10 or an empty string').optional()
-        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === "")), //.optional().isInt({ min: 0, max: 10 }.custom((value, { req })
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === null)), //.optional().isInt({ min: 0, max: 10 }.custom((value, { req })
     check('RelevanceTT', 'RelevanceTT must be an integer number between 0 and 10 or an empty string').optional()
-        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === ""))
+        .custom((value) => ((Number.isInteger(value) && value >= 0 && value <= 10) || value === null)) //should be null instadf of "" ????
 ], (req, res) => {
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
