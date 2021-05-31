@@ -4,7 +4,8 @@
   "description": "Time Travel API",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "n": "nodemon index.js"
   },
   "repository": {
     "type": "git",
