@@ -22,8 +22,8 @@ const err500 = (err) => {
 //Get all Movies
 router.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
-        .populate('Genre', 'Name')
-        .populate('Director', 'Name')
+        .populate('Genre') // (path, select)
+        .populate('Director')
         .then((movies) => {
             res.status(200).json(movies);
         })
