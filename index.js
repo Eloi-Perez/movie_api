@@ -18,7 +18,7 @@ app.use(morgan('common'));
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 //CORS
-let allowedOrigins = ['https://movie-client2.netlify.app', 'https://eloi-perez.github.io/movie-Angular-client'];
+let allowedOrigins = ['https://movie-client2.netlify.app', 'https://eloi-perez.github.io'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
