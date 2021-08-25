@@ -35,14 +35,21 @@ app.use(cors({
 app.use('/', movies);
 app.use('/', users);
 
+//Welcome root route
+
+/**
+* Welcome root route
+*/
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
 });
 
+//Get Documentation
 app.get('/documentation.html', (req, res) => {
     res.sendFile('docs/documentation.html', { root: __dirname })
 });
 
+//Get Images by Title
 app.get('/img/:Title', (req, res) => {
     fs.access(`public/images/${req.params.Title}.jpg`, fs.constants.R_OK, (err) => {
         if (err) {

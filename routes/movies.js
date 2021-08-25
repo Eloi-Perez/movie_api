@@ -32,7 +32,7 @@ router.get('/movies', passport.authenticate('jwt', { session: false }), (req, re
         });
 });
 
-//Get Movies Featured
+//Get Featured Movies
 router.get('/movies/featured', (req, res) => {
     Movies.find({ "Featured": true })
         .populate({ path: 'Genre', select: 'Name' })
