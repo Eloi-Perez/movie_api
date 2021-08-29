@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "n": "nodemon index.js"
+    "n": "nodemon index.js",
+    "doc": "swagger-jsdoc -d swagger-def.js index.js routes/*.js",
+    "docHTML": "sc generate -i swagger.json -l html -o ./docs",
+    "docNode": "sc generate -i swagger.json -l nodejs-server -o ./docs"
   },
   "repository": {
     "type": "git",
@@ -13,7 +16,7 @@
   },
   "keywords": [],
   "author": "Eloi Perez Aguilar",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Eloi-Perez/movie_api/issues"
   },
@@ -30,5 +33,9 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-nodegen-cli": "^3.0.24"
   }
 }

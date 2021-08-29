@@ -1,0 +1,226 @@
+module.exports = {
+    openapi: '3.0.0',
+    info: {
+        title: 'movie-api',
+        version: '0.1.0',
+        description:
+            'This is a REST API application made with Express. It serves a movies Database',
+        license: {
+            name: 'Licensed Under MIT',
+            url: 'https://spdx.org/licenses/MIT.html',
+        },
+        contact: {
+            name: 'movie-api',
+            url: 'https://github.com/Eloi-Perez/movie_api',
+        },
+    },
+    servers: [
+        {
+            url: 'http://localhost:8080',
+            description: 'Development server',
+        },
+    ],
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT'
+            }
+        },
+        schemas: {
+            User: {
+                type: 'object',
+                required: [
+                    'Username',
+                    'Password',
+                ],
+                properties: {
+                    Username: {
+                        type: 'string',
+                        example: 'Joe'
+                    },
+                    Password: {
+                        type: 'string',
+                        example: '123456'
+                    },
+
+                }
+            },
+            CreateUser: {
+                allOf: [
+                    { $ref: "#/components/schemas/User" },
+                    {
+                        type: "object",
+                        properties: {
+                            NewUsername: {
+                                type: 'string',
+                                example: 'Joe'
+                            },
+                            NewPassword: {
+                                type: 'string',
+                                example: '123456'
+                            },
+                            NewEmail: {
+                                type: 'string',
+                                example: 'abc@abc.com'
+                            },
+                            BirthDate: {
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'JavaScript Date Object',
+                                example: '2021-01-30T08:30:00Z'
+                            },
+                        }
+                    }
+                ]
+            },
+            UpdateUser: {
+                allOf: [
+                    { $ref: "#/components/schemas/User" },
+                    {
+                        type: "object",
+                        required: [
+                            'Email'
+                        ],
+                        properties: {
+                            Email: {
+                                type: 'string',
+                                example: 'abc@abc.com'
+                            },
+                            Birthday: {
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'JavaScript Date Object',
+                                example: '2021-01-30T08:30:00Z'
+                            },
+                        }
+                    }
+                ]
+            },
+            UserMyMovies: {
+                type: 'object',
+                properties: {
+                    Username: {
+                        type: 'string',
+                        example: 'Joe'
+                    },
+                    myMovies: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                _id: {
+                                    example: '60720485078f3662d0e67bfa'
+                                },
+                                Movie: {
+                                    type: 'object',
+                                    properties: {
+                                        _id: {
+                                            example: '60720485078f3662d0e67bfa'
+                                        },
+                                        Title: {
+                                            type: 'string',
+                                            example: 'Timecrimes'
+                                        },
+                                        ImagePath: {
+                                            type: 'string',
+                                            example: '/img/timecrimes'
+                                        }
+                                    }
+                                },
+                                score: {
+                                    type: 'number',
+                                    example: '7'
+                                },
+                                RelevanceTT: {
+                                    type: 'number',
+                                    example: '9'
+                                },
+                                PlanToWatch: {
+                                    type: 'boolean',
+                                    example: false
+                                },
+                                Favorite: {
+                                    type: 'boolean',
+                                    example: true
+                                }
+                            }
+                        }
+
+                    }
+                }
+            },
+            myMovies: {
+                type: 'object',
+                required: [
+                    'Movie'
+                ],
+                properties: {
+                    Movie: {
+                        type: 'string',
+                        example: 'Timecrimes'
+                    },
+                    score: {
+                        type: 'number',
+                        example: '7'
+                    },
+                    RelevanceTT: {
+                        type: 'number',
+                        example: '9'
+                    },
+                    PlanToWatch: {
+                        type: 'boolean',
+                        example: false
+                    },
+                    Favorite: {
+                        type: 'boolean',
+                        example: true
+                    }
+                }
+
+
+            },
+            Movie: {
+                type: 'object',
+                properties: {
+                    _id: {
+                        example: '60720485078f3662d0e67bfa'
+                    },
+                    Title: {
+                        type: 'string',
+                        example: 'Timecrimes'
+                    },
+                    Description: {
+                        type: 'string',
+                        example: 'A man accidentally gets into a time machine and...'
+                    },
+                    Genre: {
+                        type: 'object',
+                        example: {}
+                    },
+                    Director: {
+                        type: 'object',
+                        example: {}
+                    },
+                    Featured: {
+                        type: 'boolean',
+                        example: true
+                    },
+                    ImagePath: {
+                        type: 'string',
+                        example: '/img/timecrimes'
+                    }
+                }
+            },
+            Movies: {
+                type: 'array',
+                items: {
+                    allOf: [
+                        { $ref: "#/components/schemas/Movie" }
+                    ]
+                }
+            }
+        }
+    }
+};

@@ -1,0 +1,653 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "movie-api",
+    "version": "0.1.0",
+    "description": "This is a REST API application made with Express. It serves a movies Database",
+    "license": {
+      "name": "Licensed Under MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "movie-api",
+      "url": "https://github.com/Eloi-Perez/movie_api"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [
+          "Username",
+          "Password"
+        ],
+        "properties": {
+          "Username": {
+            "type": "string",
+            "example": "Joe"
+          },
+          "Password": {
+            "type": "string",
+            "example": "123456"
+          }
+        }
+      },
+      "CreateUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "NewUsername": {
+                "type": "string",
+                "example": "Joe"
+              },
+              "NewPassword": {
+                "type": "string",
+                "example": "123456"
+              },
+              "NewEmail": {
+                "type": "string",
+                "example": "abc@abc.com"
+              },
+              "BirthDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "JavaScript Date Object",
+                "example": "2021-01-30T08:30:00Z"
+              }
+            }
+          }
+        ]
+      },
+      "UpdateUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/User"
+          },
+          {
+            "type": "object",
+            "required": [
+              "Email"
+            ],
+            "properties": {
+              "Email": {
+                "type": "string",
+                "example": "abc@abc.com"
+              },
+              "Birthday": {
+                "type": "string",
+                "format": "date-time",
+                "description": "JavaScript Date Object",
+                "example": "2021-01-30T08:30:00Z"
+              }
+            }
+          }
+        ]
+      },
+      "UserMyMovies": {
+        "type": "object",
+        "properties": {
+          "Username": {
+            "type": "string",
+            "example": "Joe"
+          },
+          "myMovies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "example": "60720485078f3662d0e67bfa"
+                },
+                "Movie": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "example": "60720485078f3662d0e67bfa"
+                    },
+                    "Title": {
+                      "type": "string",
+                      "example": "Timecrimes"
+                    },
+                    "ImagePath": {
+                      "type": "string",
+                      "example": "/img/timecrimes"
+                    }
+                  }
+                },
+                "score": {
+                  "type": "number",
+                  "example": "7"
+                },
+                "RelevanceTT": {
+                  "type": "number",
+                  "example": "9"
+                },
+                "PlanToWatch": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "Favorite": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "myMovies": {
+        "type": "object",
+        "required": [
+          "Movie"
+        ],
+        "properties": {
+          "Movie": {
+            "type": "string",
+            "example": "Timecrimes"
+          },
+          "score": {
+            "type": "number",
+            "example": "7"
+          },
+          "RelevanceTT": {
+            "type": "number",
+            "example": "9"
+          },
+          "PlanToWatch": {
+            "type": "boolean",
+            "example": false
+          },
+          "Favorite": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "Movie": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "example": "60720485078f3662d0e67bfa"
+          },
+          "Title": {
+            "type": "string",
+            "example": "Timecrimes"
+          },
+          "Description": {
+            "type": "string",
+            "example": "A man accidentally gets into a time machine and..."
+          },
+          "Genre": {
+            "type": "object",
+            "example": {}
+          },
+          "Director": {
+            "type": "object",
+            "example": {}
+          },
+          "Featured": {
+            "type": "boolean",
+            "example": true
+          },
+          "ImagePath": {
+            "type": "string",
+            "example": "/img/timecrimes"
+          }
+        }
+      },
+      "Movies": {
+        "type": "array",
+        "items": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Movie"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Welcome root route.",
+        "description": "HTML page.",
+        "responses": {
+          "200": {
+            "description": "HTML page.",
+            "content": {
+              "text/html": {}
+            }
+          }
+        }
+      }
+    },
+    "/img/{Title}": {
+      "get": {
+        "summary": "Get Images by Title",
+        "description": "Movies images.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Title",
+            "required": true,
+            "description": "Title of the movie.",
+            "schema": {
+              "type": "string",
+              "items": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ".jpg Movies images.",
+            "content": {
+              "image/jpeg": {}
+            }
+          },
+          "404": {
+            "description": "Title not found."
+          }
+        }
+      }
+    },
+    "/movies": {
+      "get": {
+        "summary": "Get all Movies.",
+        "description": "Retrive the full list of movies and their properties",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/featured": {
+      "get": {
+        "summary": "Get Featured Movies.",
+        "description": "Retrive the featured list of movies and their properties",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/{Title}": {
+      "get": {
+        "summary": "Get one Movie.",
+        "description": "Retrive movie {Title}.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Title",
+            "required": true,
+            "description": "Title of the movie.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Movie"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/genres/{Genre}": {
+      "get": {
+        "summary": "Get genre info.",
+        "description": "Retrive genre {Genre}.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Genre",
+            "required": true,
+            "description": "Name of the genre.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "example": "60720485078f3662d0e67bfa"
+                    },
+                    "Name": {
+                      "example": "Drama"
+                    },
+                    "Description": {
+                      "example": "Focused on emotions and defined by conflict..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/directors/{Director}": {
+      "get": {
+        "summary": "Get director info.",
+        "description": "Retrive director {Director}.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Director",
+            "required": true,
+            "description": "Name of the director.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "example": "60720485078f3662d0e67bfa"
+                    },
+                    "Name": {
+                      "example": "Shane Carruth"
+                    },
+                    "Description": {
+                      "example": "is an American filmmaker, screenwriter, composer, and actor..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Creates a new user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Message": {
+                      "example": "Created Successfully"
+                    },
+                    "Username": {
+                      "example": "Joe"
+                    },
+                    "token": {
+                      "example": "JWT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a user's info, by username.",
+        "description": "Update user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Message": {
+                      "example": "Updated Successfully"
+                    },
+                    "Username": {
+                      "example": "Joe"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by username.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Message": {
+                      "example": "Deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "login User.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Login Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Username": {
+                      "example": "Joe"
+                    },
+                    "token": {
+                      "example": "JWT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{Username}": {
+      "get": {
+        "summary": "Get a user by username + myMovies list in User.",
+        "description": "Retrive user {Username}.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Username",
+            "required": true,
+            "description": "User name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMyMovies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{Username}/myMovies": {
+      "patch": {
+        "summary": "Update or Add a movie to users's myMovies",
+        "description": "Update user myMovies.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Username",
+            "required": true,
+            "description": "User name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/myMovies"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMyMovies"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}

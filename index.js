@@ -35,21 +35,58 @@ app.use(cors({
 app.use('/', movies);
 app.use('/', users);
 
-//Welcome root route
-
 /**
-* Welcome root route
+* @swagger
+* /:
+*   get:
+*       summary: Welcome root route.
+*       description: HTML page.
+*       responses:
+*           200:
+*               description: HTML page.
+*               content: 
+*                   text/html: {}
 */
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
 });
 
-//Get Documentation
+/**
+* 
+* /documentation.html:
+*   get:
+*       summary: Get Documentation.
+*       description: HTML documentation page.
+*       responses:
+*           200:
+*               description: HTML documentation page.
+*               content: 
+*                   text/html: {}
+*/
 app.get('/documentation.html', (req, res) => {
     res.sendFile('docs/documentation.html', { root: __dirname })
 });
 
-//Get Images by Title
+/**
+* @swagger
+* /img/{Title}:
+*   get:
+*       summary: Get Images by Title
+*       description: Movies images.
+*       parameters:
+*       - in: path
+*         name: Title
+*         required: true
+*         description: Title of the movie.
+*         schema: { 'type': 'string', 'items': {} }
+*       responses:
+*           200:
+*               description: .jpg Movies images.
+*               content:
+*                   image/jpeg: {}
+*           404:
+*               description: Title not found.
+*/
 app.get('/img/:Title', (req, res) => {
     fs.access(`public/images/${req.params.Title}.jpg`, fs.constants.R_OK, (err) => {
         if (err) {
