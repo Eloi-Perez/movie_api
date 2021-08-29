@@ -4,7 +4,18 @@ const express = require('express'),
     morgan = require('morgan'),
     fs = require('fs');
 
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger.json');
+
 require('dotenv').config();
+
+const swaggerDefinition = require('./swagger-def.js');
+const swaggerOptions = {
+    swaggerDefinition,
+    apis: ['index.js', './routes/*.js'],
+};
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 const users = require('./routes/users.js');
 const movies = require('./routes/movies.js');
@@ -35,6 +46,10 @@ app.use(cors({
 app.use('/', movies);
 app.use('/', users);
 
+// Documentation with SwaggerUI
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 /**
 * @swagger
 * /:
@@ -48,7 +63,7 @@ app.use('/', users);
 *                   text/html: {}
 */
 app.get('/', (req, res) => {
-    res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/documentation.html">DOCUMENTATION</a>');
+    res.send('<h1>Welcome to the Time Travel Films API</h1><br><a href="/docs">DOCUMENTATION</a>');
 });
 
 /**
@@ -63,9 +78,9 @@ app.get('/', (req, res) => {
 *               content: 
 *                   text/html: {}
 */
-app.get('/documentation.html', (req, res) => {
-    res.sendFile('docs/documentation.html', { root: __dirname })
-});
+// app.get('/documentation.html', (req, res) => {
+//     res.sendFile('docs/documentation.html', { root: __dirname })
+// });
 
 /**
 * @swagger

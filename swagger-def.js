@@ -16,7 +16,7 @@ module.exports = {
     },
     servers: [
         {
-            url: 'http://localhost:8080',
+            url: 'https://movie-api2.herokuapp.com',
             description: 'Development server',
         },
     ],
