@@ -2,7 +2,7 @@
 
 API that serve a movies database and users who can favorite and score the movies.
 
-API documentation: https://eloi-perez.github.io/movie_api/documentation.html
+API documentation: [Documentation](https://movie-api2.herokuapp.com/docs/ "documentation")  (Built with Swagger UI)
 
 
 ## Technologies used:
@@ -12,5 +12,8 @@ API documentation: https://eloi-perez.github.io/movie_api/documentation.html
 * Passport
 * bcrypt
 * Json Web Token
+* JSDoc
+* OpenAPI 3.x
+* Swagger
 
 Hosted on Heroku
