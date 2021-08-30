@@ -51,7 +51,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /**
-* @swagger
+*
 * /:
 *   get:
 *       summary: Welcome root route.
