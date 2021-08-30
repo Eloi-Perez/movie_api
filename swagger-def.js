@@ -47,7 +47,7 @@ module.exports = {
 
                 }
             },
-            CreateUser: {
+            UpdateUser: {
                 allOf: [
                     { $ref: "#/components/schemas/User" },
                     {
@@ -75,7 +75,7 @@ module.exports = {
                     }
                 ]
             },
-            UpdateUser: {
+            CreateUser: {
                 allOf: [
                     { $ref: "#/components/schemas/User" },
                     {
@@ -197,11 +197,35 @@ module.exports = {
                     },
                     Genre: {
                         type: 'object',
-                        example: {}
+                        properties: {
+                            Name: {
+                                type: 'string',
+                                example: 'Horror'
+                            },
+                            Description: {
+                                type: 'string',
+                                example: 'A horror film is one that seeks to elicit fear in its audience for entertainment purposes.'
+                            }
+                        }
                     },
                     Director: {
                         type: 'object',
-                        example: {}
+                        properties: {
+                            Name: {
+                                type: 'string',
+                                example: 'Nacho Vigalondo'
+                            },
+                            Bio: {
+                                type: 'string',
+                                example: 'Ignacio Vigalondo Palacios, better known as Nacho Vigalondo, is a Spanish filmmaker.'
+                            },
+                            BirthDate: {
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'JavaScript Date Object',
+                                example: '1977-12-17T00:00:00Z'
+                            }
+                        }
                     },
                     Featured: {
                         type: 'boolean',
