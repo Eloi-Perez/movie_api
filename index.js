@@ -84,13 +84,13 @@ app.get('/', (req, res) => {
 
 /**
 * @swagger
-* /img/{Title}:
+* /img/{title}:
 *   get:
-*       summary: Get Images by Title
+*       summary: Get Images by title
 *       description: Movies images.
 *       parameters:
 *       - in: path
-*         name: Title
+*         name: title
 *         required: true
 *         description: Title of the movie.
 *         schema: { 'type': 'string', 'items': {} }
@@ -114,14 +114,14 @@ app.get('/img/:Title', (req, res) => {
 });
 
 
-//Error handler
+// Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ Error: 'Something broke!' });
     // res.status(500).json({ Error: err.toString() });
 });
 
-//Error404
+// Error404
 app.use(function (req, res, next) {
     res.status(404).sendFile('docs/documentation.html', { root: __dirname });
 });
