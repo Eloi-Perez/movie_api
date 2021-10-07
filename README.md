@@ -1,6 +1,6 @@
 # movie_api
 
-API that serve a movies database and users who can favorite and score the movies.
+API that serves a films and users database, where favourites films and scores can be added to user's data.
 
 API documentation: [Documentation](https://movie-api2.herokuapp.com/docs/ "documentation")  (Built with Swagger UI)
 
