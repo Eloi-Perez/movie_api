@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.use(morgan('common'));
 
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+mongoose.connect(process.env.MONGODB_URL, {});
 
 //CORS
 let allowedOrigins = ['https://movie-client2.netlify.app', 'https://eloi-perez.github.io'];
