@@ -50,7 +50,7 @@ router.get('/movies', passport.authenticate('jwt', { session: false }), (req, re
 * /movies/featured:
 *   get:
 *       summary: Get Featured Movies.
-*       description: Retrive the featured list of movies and their properties
+*       description: Retrieve the featured list of movies and their properties
 *       security:
 *           - bearerAuth: []
 *       responses:
@@ -78,7 +78,7 @@ router.get('/movies/featured', (req, res) => {
 * /movies/{Title}:
 *   get:
 *       summary: Get one Movie.
-*       description: Retrive movie {Title}.
+*       description: Retrieve movie {Title}.
 *       parameters:
 *       - in: path
 *         name: Title
@@ -109,7 +109,7 @@ router.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (
 * /genres/{Genre}:
 *   get:
 *       summary: Get genre info.
-*       description: Retrive genre {Genre}.
+*       description: Retrieve genre {Genre}.
 *       parameters:
 *       - in: path
 *         name: Genre
@@ -150,7 +150,7 @@ router.get('/genres/:Genre', passport.authenticate('jwt', { session: false }), (
 * /directors/{Director}:
 *   get:
 *       summary: Get director info.
-*       description: Retrive director {Director}.
+*       description: Retrieve director {Director}.
 *       parameters:
 *       - in: path
 *         name: Director
