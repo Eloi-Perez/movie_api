@@ -22,7 +22,7 @@ const err500 = (err) => {
 * /movies:
 *   get:
 *       summary: Get all Movies.
-*       description: Retrive the full list of movies and their properties
+*       description: Retrieve the full list of movies and their properties
 *       security:
 *           - bearerAuth: []
 *       responses:
