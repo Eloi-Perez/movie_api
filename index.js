@@ -2,6 +2,7 @@ const express = require('express'),
     cors = require('cors'),
     mongoose = require('mongoose'),
     morgan = require('morgan'),
+    passport = require("passport"),
     fs = require('fs');
 
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -40,6 +41,8 @@ app.use(cors({
         return callback(null, true);
     }
 }));
+
+app.use(passport.initialize())
 
 
 //Routes
