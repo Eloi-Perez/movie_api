@@ -109,7 +109,7 @@ router.post(
                         BirthDate: req.body.BirthDate,
                     })
                         .then((user) => {
-                            //generete JWT here
+                            //generate JWT here
                             req.login(user, { session: false }, (err) => {
                                 if (err) {
                                     res.json({ Error: err });
@@ -200,7 +200,7 @@ router.post("/login", (req, res) => {
 * /users/{Username}:
 *   get:
 *       summary: Get a user by username + myMovies list in User.
-*       description: Retrive user {Username}.
+*       description: Retrieve user {Username}.
 *       parameters:
 *       - in: path
 *         name: Username
@@ -421,7 +421,7 @@ router.put(
                 (value) =>
                     (Number.isInteger(value) && value >= 0 && value <= 10) ||
                     value === null
-            ), //should be null instadf of "" ????
+            ), //should be null instead of "" ????
     ],
     (req, res) => {
         let errors = validationResult(req);
