@@ -16,8 +16,8 @@ module.exports = {
     },
     servers: [
         {
-            url: 'https://movie-api2.herokuapp.com',
-            description: 'Development server',
+            url: process.env.BASE_URL,
+            description: 'Production example server',
         },
     ],
     components: {
