@@ -16,5 +16,3 @@ API documentation: [Documentation](https://movieapi-production.up.railway.app/do
 * JSDoc
 * OpenAPI 3.x
 * Swagger
-
-Hosted on Heroku
