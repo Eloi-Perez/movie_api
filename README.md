@@ -4,7 +4,7 @@ API that serves a films and users database, where favourites films and scores ca
 
 API documentation: [Documentation](https://movieapi-production.up.railway.app/docs/ "documentation")  (Built with Swagger UI)
 
-![documentation page image](https://github.com/Eloi-Perez/movie_api/blob/assets/movie-api.png)
+[![documentation page image](https://github.com/Eloi-Perez/movie_api/blob/assets/movie-api.png)](https://movieapi-production.up.railway.app/docs/) 
 
 ## Technologies used:
 * Node.js
